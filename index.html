@@ -235,13 +235,12 @@ footer{background:var(--black);padding:40px 40px 28px;}
      ═══════════════════════════════════ -->
 <script>
   /* EmailJS */
-  const EMAILJS_PUBLIC_KEY  = "HjvepEl_6R5bWH2E0";      // from emailjs.com → Account → API Keys
-  const EMAILJS_SERVICE_ID  = "service_nhg6v3t";      // from emailjs.com → Email Services
-  const EMAILJS_TEMPLATE_ID = "template_numkt45";     // from emailjs.com → Email Templates
+  const EMAILJS_PUBLIC_KEY  = "YOUR_PUBLIC_KEY";      // from emailjs.com → Account → API Keys
+  const EMAILJS_SERVICE_ID  = "YOUR_SERVICE_ID";      // from emailjs.com → Email Services
+  const EMAILJS_TEMPLATE_ID = "YOUR_TEMPLATE_ID";     // from emailjs.com → Email Templates
 
-  /* Mailchimp — paste your embedded form action URL here */
-  const MAILCHIMP_URL = "YOUR_MAILCHIMP_FORM_ACTION_URL";
-  // Example: "https://teachhustle.us21.list-manage.com/subscribe/post?u=abc123&amp;id=def456"
+  /* No Mailchimp needed — signups go via EmailJS */
+  const SIGNUP_TEMPLATE_ID = "template_numkt45"; // reuses same template
 </script>
 
 <!-- NAV -->
@@ -624,34 +623,40 @@ function sendContactForm(){
   });
 }
 
-/* ── MAILCHIMP SIGNUP ── */
+/* ── EMAIL SIGNUP via EmailJS ── */
 function subscribeMailchimp(){
   var email  = document.getElementById('mc-email').value.trim();
   var status = document.getElementById('mc-status');
+  var btn    = document.querySelector('.btn-black');
 
   if(!email||!/\S+@\S+\.\S+/.test(email)){
-    status.textContent='Please enter a valid email address.';
-    return;
-  }
-  if(MAILCHIMP_URL==='YOUR_MAILCHIMP_FORM_ACTION_URL'){
-    status.textContent='⚠️ Mailchimp URL not configured yet — see README.';
+    status.textContent='⚠️ Please enter a valid email address.';
     return;
   }
 
-  /* Mailchimp JSONP submission (bypasses CORS) */
-  var url  = MAILCHIMP_URL.replace('/post?','/post-json?') + '&EMAIL=' + encodeURIComponent(email) + '&c=mcCallback';
-  var script = document.createElement('script');
-  window.mcCallback = function(data){
-    if(data.result==='success'){
-      status.textContent='You\'re in! Welcome to the TeachHustle fam 🎉';
-      document.getElementById('mc-email').value='';
-    } else {
-      status.textContent = data.msg || 'Something went wrong. Please try again.';
-    }
-    document.body.removeChild(script);
-  };
-  script.src = url;
-  document.body.appendChild(script);
+  btn.textContent='Joining...';
+  btn.disabled=true;
+  status.textContent='';
+
+  emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, {
+    from_name : 'New Subscriber',
+    from_email: email,
+    subject   : 'New Signup – Join the TeachHustle Fam',
+    message   : '🎉 New signup from: ' + email + '\n\nAdd them to your list and send a welcome email!',
+    reply_to  : email
+  }).then(function(){
+    status.textContent='🎉 You\'re in! Welcome to the TeachHustle fam!';
+    status.style.color='#0A0A0A';
+    status.style.fontWeight='700';
+    document.getElementById('mc-email').value='';
+    btn.textContent='Get Started Free';
+    btn.disabled=false;
+  }, function(err){
+    status.textContent='❌ Something went wrong. Please try again.';
+    btn.textContent='Get Started Free';
+    btn.disabled=false;
+    console.error('Signup error:',err);
+  });
 }
 </script>
 </body>
