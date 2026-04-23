@@ -240,7 +240,7 @@ footer{background:var(--black);padding:40px 40px 28px;}
   const EMAILJS_TEMPLATE_ID = "YOUR_TEMPLATE_ID";     // from emailjs.com → Email Templates
 
   /* No Mailchimp needed — signups go via EmailJS */
-  const SIGNUP_TEMPLATE_ID = "template_numkt45"; // reuses same template
+  const SIGNUP_TEMPLATE_ID = "template_6ufzbxi"; // reuses same template
 </script>
 
 <!-- NAV -->
@@ -599,7 +599,7 @@ function sendContactForm(){
   status.textContent='';
   status.className='form-status';
 
-  emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, {
+  emailjs.send(EMAILJS_SERVICE_ID, "template_6ufzbxi", {
     from_name : fname + (lname ? ' '+lname : ''),
     from_email: email,
     subject   : subject,
@@ -638,7 +638,7 @@ function subscribeMailchimp(){
   btn.disabled=true;
   status.textContent='';
 
-  emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, {
+  emailjs.send(EMAILJS_SERVICE_ID, "template_6ufzbxi", {
     from_name : 'New Signup',
     from_email: email,
     subject   : 'New Signup – Join the TeachHustle Fam',
